@@ -15,36 +15,19 @@
 </body>
 <script>
   (async () => {
-  // const videoEl = document.getElementById('video');
-  // videoEl.setAttribute('src', 'data:video/mp4,base64,AAAAAAAAAAEADx8OAAAD6QABAAAAABJ2bWRpYQAAACBtZGhkAAAAANrcbKra3GyqAAB1MAAFCloVxwAAAAAAQGg');
-  // console.log(videoEl.getAttribute('src'))
+  const videoEl = document.getElementById("video");
+  const writableStream = new WritableStream();
 
-  const video = document.getElementById("video");
   const data = await fetch('http://localhost:8000').then((response) => {
     const reader = response.body.getReader();
-    return new ReadableStream({
-      start(controller) {
-        let done = false;
-        while(done) {
-          reader.read().then((chunk) => {
-            done = chunk.done;
-            controller.enqueue(chunk);
-          })
-        }
-        controller.close();
-      }
-    })
+    let done = false;
+    while(!done) {
+      reader.read().then((chunk) => {
+        done = chunk.done;
+        writableStream.getWriter().write(chunk.value)
+      });
+    }
   })
-  .then((stream) => new Response(stream))
-  .then((response) => response.blob())
-  .then((blob) => URL.createObjectURL(blob));
-
-  console.log(data)
-  // console.log(JSON.parse(data.blob()))
-  // console.log('sd')
-  // console.log(binaryString)
-  // const blob = new Blob([binaryString], {type: "video/mp4"}); // Replace "video/mp4" with the type MIME of your video
-  video.srcObject = data;
  })()
 </script>
 </html>
