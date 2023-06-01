@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <p>Hello</p>
+  <video id="video" controls autoplay="true">
+    <!-- <source src="http://localhost:8000" type="video/mp4"></source> -->
+  </video>
+  <p>Hello 2</p>
+</body>
+<script>
+  (async () => {
+  // const videoEl = document.getElementById('video');
+  // videoEl.setAttribute('src', 'data:video/mp4,base64,AAAAAAAAAAEADx8OAAAD6QABAAAAABJ2bWRpYQAAACBtZGhkAAAAANrcbKra3GyqAAB1MAAFCloVxwAAAAAAQGg');
+  // console.log(videoEl.getAttribute('src'))
+
+  const video = document.getElementById("video");
+  const data = await fetch('http://localhost:8000').then((response) => {
+    const reader = response.body.getReader();
+    return new ReadableStream({
+      start(controller) {
+        let done = false;
+        while(done) {
+          reader.read().then((chunk) => {
+            done = chunk.done;
+            controller.enqueue(chunk);
+          })
+        }
+        controller.close();
+      }
+    })
+  })
+  .then((stream) => new Response(stream))
+  .then((response) => response.blob())
+  .then((blob) => URL.createObjectURL(blob));
+
+  console.log(data)
+  // console.log(JSON.parse(data.blob()))
+  // console.log('sd')
+  // console.log(binaryString)
+  // const blob = new Blob([binaryString], {type: "video/mp4"}); // Replace "video/mp4" with the type MIME of your video
+  video.srcObject = data;
+ })()
+</script>
+</html>
