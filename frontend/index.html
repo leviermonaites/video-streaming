@@ -8,26 +8,26 @@
 </head>
 <body>
   <p>Hello</p>
-  <video id="video" controls autoplay="true">
+  <video id="video" src="data:video/mp4;base64," controls autoplay="true">
     <!-- <source src="http://localhost:8000" type="video/mp4"></source> -->
   </video>
   <p>Hello 2</p>
 </body>
 <script>
-  (async () => {
-  const videoEl = document.getElementById("video");
-  const writableStream = new WritableStream();
-
-  const data = await fetch('http://localhost:8000').then((response) => {
-    const reader = response.body.getReader();
-    let done = false;
-    while(!done) {
-      reader.read().then((chunk) => {
-        done = chunk.done;
-        writableStream.getWriter().write(chunk.value)
-      });
-    }
+  const data =  fetch('https://lukkanjos-turbo-engine-qw55pv5q77v2996v-8000.preview.app.github.dev/').then(async (response) => {
+  const reader = response.body.getReader();
+  
+  let done = false;
+  while(!done) {
+    
+    await reader.read().then((chunk) => {
+      done = chunk.done
+      const videoEl = document.getElementById('video');
+      const srcValue = videoEl.getAttribute('src');
+      videoEl.setAttribute('src', `${srcValue}${chunk.value.toString('base64url')}`)
   })
- })()
+    console.log(done)
+  }
+  })
 </script>
 </html>

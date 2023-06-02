@@ -7,7 +7,8 @@ createServer({}, (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
   res.setHeader('Access-Control-Allow-Max-Age', 2592000);
-  res.setHeader('Content-Type', `video/mp4`);
+  console.log('new req')
+  // res.setHeader('Content-Type', `video/mp4`);
   const byteOffset = (parseInt(req.headers['byte-offset'] as string | undefined ?? '0'));
   const start = byteOffset;
   const end = byteOffset + 1024;
@@ -15,11 +16,12 @@ createServer({}, (req, res) => {
   videoReadStream.on("data", (chunk) => {
     const stat = fs.statSync('video.mp4');
     const base64Chunk = Buffer.from(chunk).toString('base64url');
-    console.log(base64Chunk);
+    // console.log(base64Chunk);
 
     // res.setHeader('Content-Range', `bytes ${byteOffset}-${byteOffset + 1024}/${stat.size}`);
     // res.setHeader('Content-Length', end - start);
     // res.setHeader('Accept-Ranges', `bytes`);
+    return base64Chunk;
   }).pipe(res)
   // videoReadStream.pipe(res)
   // console.log(buffer);
